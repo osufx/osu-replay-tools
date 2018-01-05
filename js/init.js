@@ -1,7 +1,9 @@
-var file_uploader;
+var file_uploader, loaded_replay;
 
 function loadDependencies(){
     let require = ["lzma.min.js", "replay-parser.js"];
+    
+    script_status = -require.length;
 
     let scripts = Array
     .from(document.querySelectorAll('script'))
@@ -16,8 +18,10 @@ function loadDependencies(){
     });
 }
 
+loadDependencies();
+
 window.onload = function(){
-    loadDependencies();
+    loaded_replay = new Replay();
 
     file_uploader = document.createElement("input");
     file_uploader.type = "file";
@@ -32,7 +36,13 @@ var uploadListener = function(e) {
 	var reader = new FileReader();
 	reader.onload = (function(f) {
 		return function(progress) {
-            //Get data and run some sort of replay parser
+            var data = atob(progress.target.result.split("base64,",)[1]).split("").map(function(value, i, array){
+                return value.charCodeAt(0);
+            });
+            loaded_replay.Parse(data, function(data){
+                loaded_replay.ReplayData = loaded_replay.ParseReplayData(data);
+                return loaded_replay;
+            });
 		};
 	})(file);
 	reader.readAsDataURL(file);
