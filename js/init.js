@@ -2,8 +2,6 @@ var file_uploader, loaded_replay;
 
 function loadDependencies(){
     let require = ["lzma.min.js", "replay-parser.js"];
-    
-    script_status = -require.length;
 
     let scripts = Array
     .from(document.querySelectorAll('script'))
